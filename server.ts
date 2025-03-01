@@ -1,3 +1,6 @@
+
+
+
 import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
@@ -6,6 +9,7 @@ import availableRouter from './pages/books_status';
 import bookRouter from './pages/books';
 import authorRouter from './pages/authors';
 import createBookRouter from './pages/create_book';
+import genreRouter from './pages/genres';
 
 // Create express app
 const app = express();
@@ -19,6 +23,7 @@ app.listen(port, () => {
 const mongoDB = 'mongodb://127.0.0.1:27017/my_library_db';
 mongoose.connect(mongoDB);
 const db = mongoose.connection;
+
 
 // Bind database connection to error event (to get notification of connection errors)
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
@@ -45,3 +50,6 @@ app.use('/books', bookRouter);
 app.use('/authors', authorRouter);
 
 app.use('/newbook', createBookRouter);
+
+// Add the new genres router
+app.use('/genres', genreRouter);

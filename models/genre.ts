@@ -1,3 +1,6 @@
+
+
+
 import mongoose, { Schema, Document, Model, FilterQuery, ObjectId } from 'mongoose';
 
 /**
@@ -13,10 +16,12 @@ export interface IGenre extends Document {
  * This interface extends the Mongoose Model interface and adds custom static methods.
  * @property {Function} getGenreCount - Static method to get the count of genres.
  * @property {Function} getGenreIdByName - Static method to get the ID of a genre by its name.
+ * @property {Function} getAllGenres - Static method to get all genres with optional sorting.
  */
 export interface IGenreModel extends Model<IGenre> {
   getGenreCount(filter?: FilterQuery<IGenre>): Promise<number>;
   getGenreIdByName(name: string): Promise<mongoose.Types.ObjectId | null>;
+  getAllGenres(sortOpts?: { [key: string]: 1 | -1 }): Promise<string[]>;
 }
 
 /**
@@ -50,6 +55,21 @@ GenreSchema.statics.getGenreIdByName = async function (name: string): Promise<mo
     return null;
   }
   return genre._id;
+}
+
+/**
+ * Retrieves all genres with an optional sort option.
+ * @param sortOpts an optional sort option to sort the genres.
+ * @returns a promise that resolves to an array of genre names
+ */
+GenreSchema.statics.getAllGenres = async function (sortOpts?: { [key: string]: 1 | -1 }): Promise<string[]> {
+  let genreList: IGenre[] = [];
+  if(sortOpts) {
+    genreList = await Genre.find().sort(sortOpts);
+  } else {
+    genreList = await Genre.find();
+  }
+  return genreList.map(genre => genre.name);
 }
 
 /**
